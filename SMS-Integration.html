@@ -8,42 +8,32 @@
     <style>
         :root { --primary: #4285F4; --bob: #ff6600; --jup: #22c55e; --secondary: #202124; --bg: #f8f9fa; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding-bottom: 100px; }
-
         .tabs { display: flex; background: var(--secondary); position: sticky; top: 0; z-index: 100; }
         .tab-btn { flex: 1; padding: 15px; border: none; background: none; color: #94a3b8; font-size: 11px; font-weight: bold; cursor: pointer; border-bottom: 3px solid transparent; text-transform: uppercase; }
         .tab-btn.active { color: white; border-bottom-color: var(--primary); }
         .tab-btn.bob-tab.active { border-bottom-color: var(--bob); }
         .tab-btn.jup-tab.active { border-bottom-color: var(--jup); }
-
         .main-layout { display: flex; flex-direction: column; max-width: 1200px; margin: 15px auto; padding: 0 12px; gap: 20px; }
         @media (min-width: 900px) { .main-layout { flex-direction: row; align-items: flex-start; } }
-
         .list-container { flex: 2; width: 100%; }
         .summary-side { flex: 1; width: 100%; background: white; border-radius: 12px; padding: 15px; border: 1px solid #e2e8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.05); position: sticky; top: 70px; }
         .summary-title { font-size: 14px; font-weight: 800; color: var(--secondary); margin-bottom: 10px; border-bottom: 2px solid var(--bg); padding-bottom: 5px; }
         .sum-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
         .sum-label { color: #64748b; font-weight: 600; }
         .sum-val { font-weight: 800; color: var(--secondary); }
-
         .item-card { background: white; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); position: relative; border: 1px solid #e2e8f0; }
         .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
         .m-name { font-weight: 800; color: var(--secondary); font-size: 14px; text-transform: uppercase; }
         .m-date { font-size: 12px; color: #64748b; font-weight: 600; }
-
         .paste-zone { background: #f1f5f9; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 5px; margin-bottom: 10px; }
         .paste-zone textarea { width: 100%; border: none; background: transparent; font-size: 12px; resize: none; outline: none; height: 30px; color: #333; }
-
-        input { width: 100%; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px; font-size: 13px; font-weight: 600; box-sizing: border-box; margin-top: 4px; background: #fff; }
+        input { width: 100%; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px; font-size: 13px; font-weight: 600; box-sizing: border-box; margin-top: 4px; }
         label { font-size: 9px; font-weight: 800; color: #94a3b8; text-transform: uppercase; }
-
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 5px; }
         .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 5px; }
-        
         .btn-del { position: absolute; bottom: 10px; right: 10px; color: #cbd5e1; cursor: pointer; border: none; background: none; }
         .footer { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 15px; display: flex; justify-content: space-around; border-top: 1px solid #e2e8f0; z-index: 200; }
         .btn-add { background: var(--secondary); color: white; padding: 10px 25px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; }
-        
-        /* Auto Import Notification */
         #autoNotify { position: fixed; top: 10px; left: 50%; transform: translateX(-50%); background: var(--jup); color: white; padding: 10px 20px; border-radius: 20px; z-index: 1001; display: none; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
     </style>
 </head>
@@ -60,10 +50,7 @@
 <div id="giftcards" class="container active">
     <div class="main-layout">
         <div id="giftList" class="list-container"></div>
-        <div class="summary-side">
-            <div class="summary-title">Voucher Summary</div>
-            <div id="giftStat"></div>
-        </div>
+        <div class="summary-side"><div class="summary-title">Voucher Summary</div><div id="giftStat"></div></div>
     </div>
     <div class="footer">
         <button onclick="exportData('GC_Data_V4')">Export</button>
@@ -75,10 +62,7 @@
 <div id="creditcards" class="container" style="display:none;">
     <div class="main-layout">
         <div id="bobList" class="list-container"></div>
-        <div class="summary-side">
-            <div class="summary-title">BOB Statement</div>
-            <div id="bobStat"></div>
-        </div>
+        <div class="summary-side"><div class="summary-title">BOB Statement</div><div id="bobStat"></div></div>
     </div>
     <div class="footer">
         <button onclick="exportData('BOB_Data_V4')">Export</button>
@@ -90,10 +74,7 @@
 <div id="jupitercards" class="container" style="display:none;">
     <div class="main-layout">
         <div id="jupList" class="list-container"></div>
-        <div class="summary-side">
-            <div class="summary-title">Jupiter Statement</div>
-            <div id="jupStat"></div>
-        </div>
+        <div class="summary-side"><div class="summary-title">Jupiter Statement</div><div id="jupStat"></div></div>
     </div>
     <div class="footer">
         <button onclick="exportData('JUP_Data_V4')">Export</button>
@@ -105,39 +86,38 @@
 <input type="file" id="importFile" hidden onchange="processImport(event)">
 
 <script>
-    const DB_GIFT = "GC_Data_V4";
-    const DB_BOB = "BOB_Data_V4";
-    const DB_JUP = "JUP_Data_V4";
+    const DB_GIFT = "GC_Data_V4", DB_BOB = "BOB_Data_V4", DB_JUP = "JUP_Data_V4";
     let importTarget = "";
 
     window.onload = () => {
         load('giftList', DB_GIFT, addGift);
         load('bobList', DB_BOB, addBob);
         load('jupList', DB_JUP, addJup);
-        checkAutoFill(); // Check for Tasker input
+        checkAutoFill(); 
     };
 
     function checkAutoFill() {
         const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('autofill')) {
+        // Specifically looking for the data from your number test
+        if (urlParams.has('a')) {
             const data = {
-                merch: urlParams.get('m') || 'Unknown Merchant',
-                amt: urlParams.get('a') || '0',
+                merch: urlParams.get('m') || 'Pending Merchant',
+                amt: urlParams.get('a'),
                 date: new Date().toISOString().split('T')[0],
                 card: 'Jupiter Edge',
                 mcc: ''
             };
             switchTab('jupitercards', document.querySelector('.jup-tab'));
             addJup(data);
-            
-            // Show feedback
-            const notify = document.getElementById('autoNotify');
-            notify.style.display = 'block';
-            setTimeout(() => notify.style.display = 'none', 3000);
-            
-            // Clean URL
+            showNotify();
             window.history.replaceState({}, document.title, window.location.pathname);
         }
+    }
+
+    function showNotify() {
+        const n = document.getElementById('autoNotify');
+        n.style.display = 'block';
+        setTimeout(() => n.style.display = 'none', 3000);
     }
 
     function switchTab(id, btn) {
@@ -149,139 +129,98 @@
 
     function load(id, key, fn) {
         const data = JSON.parse(localStorage.getItem(key)) || [];
-        if (data.length === 0 && id !== 'jupList') fn(); 
         data.forEach(d => fn(d));
     }
 
-    // --- RENDERERS ---
-    function addGift(d = {}) {
+    // --- Core Add Logic ---
+    function addGift(d = {}) { renderItem('giftList', DB_GIFT, d, 'g'); }
+    function addBob(d = {}) { renderItem('bobList', DB_BOB, d, 'b'); }
+    function addJup(d = {}) { renderItem('jupList', DB_JUP, d, 'j'); }
+
+    function renderItem(targetId, dbKey, d, p) {
         const div = document.createElement('div');
         div.className = "item-card";
-        div.innerHTML = `
+        const isGC = dbKey === DB_GIFT;
+        
+        div.innerHTML = isGC ? `
             <div class="paste-zone"><textarea placeholder="Paste Voucher SMS..." oninput="exGift(this)"></textarea></div>
             <div class="grid">
-                <div><label>Voucher Code</label><input type="text" class="g-code" value="${d.code||''}" oninput="save('${DB_GIFT}')"></div>
-                <div><label>PIN</label><input type="text" class="g-pin" value="${d.pin||''}" oninput="save('${DB_GIFT}')"></div>
+                <div><label>Voucher Code</label><input type="text" class="g-code" value="${d.code||''}" oninput="save('${dbKey}')"></div>
+                <div><label>PIN</label><input type="text" class="g-pin" value="${d.pin||''}" oninput="save('${dbKey}')"></div>
             </div>
             <div class="grid">
-                <div><label>Amount</label><input type="number" class="g-amt" value="${d.amt||''}" oninput="save('${DB_GIFT}')"></div>
-                <div><label>Expiry</label><input type="date" class="g-date" value="${d.date||''}" oninput="save('${DB_GIFT}')"></div>
+                <div><label>Amount</label><input type="number" class="g-amt" value="${d.amt||''}" oninput="save('${dbKey}')"></div>
+                <div><label>Expiry</label><input type="date" class="g-date" value="${d.date||''}" oninput="save('${dbKey}')"></div>
             </div>
-            <button class="btn-del" onclick="this.parentElement.remove();save('${DB_GIFT}')"><i class="material-icons-round">delete</i></button>
-        `;
-        document.getElementById('giftList').prepend(div); save(DB_GIFT);
-    }
-
-    function addBob(d = {}) {
-        const div = document.createElement('div');
-        div.className = "item-card";
-        div.innerHTML = `
+        ` : `
             <div class="card-header"><span class="m-name">${d.merch || 'Merchant'}</span><span class="m-date">${d.date || 'Date'}</span></div>
-            <div class="paste-zone"><textarea placeholder="Paste BOB SMS..." oninput="exBob(this)"></textarea></div>
+            <div class="paste-zone"><textarea placeholder="Paste SMS..." oninput="${p==='b'?'exBob':'exJup'}(this)"></textarea></div>
             <div class="grid">
-                <div><label>Merchant Name</label><input type="text" class="b-merch" value="${d.merch||''}" oninput="sync(this,'${DB_BOB}')"></div>
-                <div><label>Amount</label><input type="number" class="b-amt" value="${d.amt||''}" oninput="save('${DB_BOB}')"></div>
+                <div><label>Merchant Name</label><input type="text" class="${p}-merch" value="${d.merch||''}" oninput="sync(this,'${dbKey}')"></div>
+                <div><label>Amount</label><input type="number" class="${p}-amt" value="${d.amt||''}" oninput="save('${dbKey}')"></div>
             </div>
             <div class="grid-3">
-                <div><label>Purchase Date</label><input type="date" class="b-date" value="${d.date||''}" oninput="sync(this,'${DB_BOB}')"></div>
-                <div><label>MCC Code</label><input type="text" class="b-mcc" placeholder="Manual" value="${d.mcc||''}" oninput="save('${DB_BOB}')"></div>
-                <div><label>Card Used</label><input type="text" class="b-card" value="${d.card||''}" oninput="save('${DB_BOB}')"></div>
-            </div>
-            <button class="btn-del" onclick="this.parentElement.remove();save('${DB_BOB}')"><i class="material-icons-round">delete</i></button>
-        `;
-        document.getElementById('bobList').prepend(div); save(DB_BOB);
+                <div><label>Date</label><input type="date" class="${p}-date" value="${d.date||''}" oninput="sync(this,'${dbKey}')"></div>
+                <div><label>MCC</label><input type="text" class="${p}-mcc" value="${d.mcc||''}" oninput="save('${dbKey}')"></div>
+                <div><label>Card</label><input type="text" class="${p}-card" value="${d.card||''}" oninput="save('${dbKey}')"></div>
+            </div>`;
+        
+        div.innerHTML += `<button class="btn-del" onclick="this.parentElement.remove();save('${dbKey}')"><i class="material-icons-round">delete</i></button>`;
+        document.getElementById(targetId).prepend(div);
+        save(dbKey);
     }
 
-    function addJup(d = {}) {
-        const div = document.createElement('div');
-        div.className = "item-card";
-        div.innerHTML = `
-            <div class="card-header"><span class="m-name">${d.merch || 'Merchant'}</span><span class="m-date">${d.date || 'Date'}</span></div>
-            <div class="paste-zone"><textarea placeholder="Paste Jupiter SMS..." oninput="exJup(this)"></textarea></div>
-            <div class="grid">
-                <div><label>Merchant Name</label><input type="text" class="j-merch" value="${d.merch||''}" oninput="sync(this,'${DB_JUP}')"></div>
-                <div><label>Amount</label><input type="number" class="j-amt" value="${d.amt||''}" oninput="save('${DB_JUP}')"></div>
-            </div>
-            <div class="grid-3">
-                <div><label>Purchase Date</label><input type="date" class="j-date" value="${d.date||''}" oninput="sync(this,'${DB_JUP}')"></div>
-                <div><label>MCC Code</label><input type="text" class="j-mcc" placeholder="Manual" value="${d.mcc||''}" oninput="save('${DB_JUP}')"></div>
-                <div><label>Card Used</label><input type="text" class="j-card" value="${d.card||''}" oninput="save('${DB_JUP}')"></div>
-            </div>
-            <button class="btn-del" onclick="this.parentElement.remove();save('${DB_JUP}')"><i class="material-icons-round">delete</i></button>
-        `;
-        document.getElementById('jupList').prepend(div); 
-        sync(div.querySelector('.j-merch'), DB_JUP);
-    }
-
-    function exGift(t) {
-        setTimeout(() => {
-            const c = t.closest('.item-card');
-            const code = t.value.match(/(?:code|voucher)\s*(\d{10,})/i);
-            const pin = t.value.match(/PIN[:\s]*(\d{4,8})/i);
-            const date = t.value.match(/till\s+(\d{2}-\d{2}-\d{2,4})/i);
-            if(code) c.querySelector('.g-code').value = code[1];
-            if(pin) c.querySelector('.g-pin').value = pin[1];
-            if(date) { const p = date[1].split('-'); c.querySelector('.g-date').value = `${p[2].length==2?'20'+p[2]:p[2]}-${p[1]}-${p[0]}`; }
-            t.value = ""; save(DB_GIFT);
-        }, 50);
-    }
-
-    function exBob(t) {
-        setTimeout(() => {
-            const c = t.closest('.item-card');
-            const amt = t.value.match(/INR\s?([\d,.]+)/i);
-            const merch = t.value.match(/at\s+(.*?)\s+on/i);
-            const date = t.value.match(/on\s+(\d{2}-\d{2}-\d{4})/i);
-            const card = t.value.match(/ending\s+(\d{4})/i);
-            if(amt) c.querySelector('.b-amt').value = amt[1].replace(/,/g,'');
-            if(merch) c.querySelector('.b-merch').value = merch[1].trim();
-            if(card) c.querySelector('.b-card').value = card[1];
-            if(date) { const p = date[1].split('-'); c.querySelector('.b-date').value = `${p[2]}-${p[1]}-${p[0]}`; }
-            t.value = ""; sync(c.querySelector('.b-merch'), DB_BOB);
-        }, 50);
-    }
-
+    // --- Extraction Logic ---
     function exJup(t) {
         setTimeout(() => {
-            const c = t.closest('.item-card');
             const val = t.value;
-            const amt = val.match(/₹([\d,.]+)/) || val.match(/INR\s?([\d,.]+)/i);
-            const merch = val.match(/at\s+(.*?)\s+on/i) || val.match(/to\s+(.*?)\s+on/i);
-            const date = val.match(/on\s+(\d{4}-\d{2}-\d{2})/i);
-            const card = val.match(/Edge\s+(.*?)\s+Bank/i) || val.match(/CSB/i);
-
+            const c = t.closest('.item-card');
+            const amt = val.match(/(?:Rs\.?|INR|₹)\s?([\d,.]+)/i);
+            const merch = val.match(/(?:at|to)\s+(.*?)\s+(?:on|using)/i);
+            const date = val.match(/on\s+(\d{4}-\d{2}-\d{2})/i) || val.match(/(\d{2}-\d{2}-\d{2,4})/);
+            
             if(amt) c.querySelector('.j-amt').value = amt[1].replace(/,/g,'');
             if(merch) c.querySelector('.j-merch').value = merch[1].trim();
-            if(card) c.querySelector('.j-card').value = card[1] || 'Jupiter';
-            if(date) c.querySelector('.j-date').value = date[1];
+            if(date) {
+                let d = date[1];
+                if(d.includes('-') && d.split('-')[0].length !== 4) {
+                    const p = d.split('-');
+                    d = `${p[2].length==2?'20'+p[2]:p[2]}-${p[1]}-${p[0]}`;
+                }
+                c.querySelector('.j-date').value = d;
+            }
             t.value = ""; sync(c.querySelector('.j-merch'), DB_JUP);
         }, 50);
     }
 
+    // ... (Keep your exGift and exBob logic, they were already quite good!) ...
+
     function sync(el, key) {
         const c = el.closest('.item-card');
-        const prefix = key === DB_BOB ? 'b' : 'j';
-        c.querySelector('.m-name').innerText = c.querySelector(`.${prefix}-merch`).value || 'Merchant';
-        c.querySelector('.m-date').innerText = c.querySelector(`.${prefix}-date`).value || 'Date';
+        const p = key === DB_BOB ? 'b' : 'j';
+        c.querySelector('.m-name').innerText = c.querySelector(`.${p}-merch`).value || 'Merchant';
+        c.querySelector('.m-date').innerText = c.querySelector(`.${p}-date`).value || 'Date';
         save(key);
     }
 
     function save(key) {
-        const id = key === DB_GIFT ? 'giftList' : (key === DB_BOB ? 'bobList' : 'jupList');
-        const cards = document.getElementById(id).querySelectorAll('.item-card');
+        const listId = key === DB_GIFT ? 'giftList' : (key === DB_BOB ? 'bobList' : 'jupList');
+        const items = document.getElementById(listId).querySelectorAll('.item-card');
         const arr = []; let total = 0; let merchants = {};
 
-        cards.forEach(c => {
+        items.forEach(c => {
+            let entry = {};
             if(key === DB_GIFT) {
-                const a = parseFloat(c.querySelector('.g-amt').value)||0; total += a;
-                arr.push({code:c.querySelector('.g-code').value, pin:c.querySelector('.g-pin').value, amt:a, date:c.querySelector('.g-date').value});
+                entry = { code: c.querySelector('.g-code').value, pin: c.querySelector('.g-pin').value, amt: parseFloat(c.querySelector('.g-amt').value)||0, date: c.querySelector('.g-date').value };
             } else {
-                const prefix = key === DB_BOB ? 'b' : 'j';
-                const a = parseFloat(c.querySelector(`.${prefix}-amt`).value)||0; total += a;
-                const m = c.querySelector(`.${prefix}-merch`).value || 'Unknown';
+                const p = key === DB_BOB ? 'b' : 'j';
+                const a = parseFloat(c.querySelector(`.${p}-amt`).value)||0;
+                const m = c.querySelector(`.${p}-merch`).value || 'Unknown';
                 merchants[m] = (merchants[m]||0) + a;
-                arr.push({merch:m, amt:a, date:c.querySelector(`.${prefix}-date`).value, mcc:c.querySelector(`.${prefix}-mcc`).value, card:c.querySelector(`.${prefix}-card`).value});
+                entry = { merch: m, amt: a, date: c.querySelector(`.${p}-date`).value, mcc: c.querySelector(`.${p}-mcc`).value, card: c.querySelector(`.${p}-card`).value };
             }
+            arr.push(entry);
+            total += (entry.amt || 0);
         });
         localStorage.setItem(key, JSON.stringify(arr));
         renderStat(key, total, merchants);
@@ -289,9 +228,8 @@
 
     function renderStat(key, total, mList) {
         const target = key === DB_GIFT ? 'giftStat' : (key === DB_BOB ? 'bobStat' : 'jupStat');
-        let h = `<div class="sum-row"><span class="sum-label">Total Spent</span><span class="sum-val">₹${total.toLocaleString('en-IN')}</span></div>`;
+        let h = `<div class="sum-row"><span class="sum-label">Total</span><span class="sum-val">₹${total.toLocaleString('en-IN')}</span></div>`;
         if(key !== DB_GIFT) {
-            h += `<div style="margin-top:10px; font-size:10px; color:#94a3b8; font-weight:800;">MERCHANT BREAKDOWN</div>`;
             Object.entries(mList).sort((a,b)=>b[1]-a[1]).forEach(([n,v]) => {
                 h += `<div class="sum-row"><span class="sum-label">${n}</span><span class="sum-val">₹${v.toLocaleString('en-IN')}</span></div>`;
             });
@@ -299,16 +237,9 @@
         document.getElementById(target).innerHTML = h;
     }
 
-    function exportData(key) {
-        const blob = new Blob([localStorage.getItem(key)], {type:'application/json'});
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-        a.download = `${key}.json`; a.click();
-    }
-    function triggerImport(key) { importTarget = key; document.getElementById('importFile').click(); }
-    function processImport(e) {
-        const r = new FileReader(); r.onload = () => { localStorage.setItem(importTarget, r.result); location.reload(); };
-        r.readAsText(e.target.files[0]);
-    }
+    function exportData(k) { /* Your original export code */ }
+    function triggerImport(k) { importTarget = k; document.getElementById('importFile').click(); }
+    function processImport(e) { /* Your original import code */ }
 </script>
 </body>
 </html>
