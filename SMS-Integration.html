@@ -32,10 +32,6 @@
 
         .paste-zone { background: #f1f5f9; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 5px; margin-bottom: 10px; }
         .paste-zone textarea { width: 100%; border: none; background: transparent; font-size: 12px; resize: none; outline: none; height: 30px; color: #333; }
-        
-        /* Bulk Import Style */
-        .bulk-import { background: #e8f5e9; border: 2px solid var(--jup); border-radius: 12px; padding: 15px; margin-bottom: 20px; }
-        .bulk-import textarea { width: 100%; height: 60px; border: 1px solid #c8e6c9; border-radius: 6px; padding: 8px; box-sizing: border-box; font-size: 12px; margin-bottom: 10px; }
 
         input { width: 100%; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px; font-size: 13px; font-weight: 600; box-sizing: border-box; margin-top: 4px; background: #fff; }
         label { font-size: 9px; font-weight: 800; color: #94a3b8; text-transform: uppercase; }
@@ -46,9 +42,14 @@
         .btn-del { position: absolute; bottom: 10px; right: 10px; color: #cbd5e1; cursor: pointer; border: none; background: none; }
         .footer { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 15px; display: flex; justify-content: space-around; border-top: 1px solid #e2e8f0; z-index: 200; }
         .btn-add { background: var(--secondary); color: white; padding: 10px 25px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; }
+        
+        /* Auto Import Notification */
+        #autoNotify { position: fixed; top: 10px; left: 50%; transform: translateX(-50%); background: var(--jup); color: white; padding: 10px 20px; border-radius: 20px; z-index: 1001; display: none; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
     </style>
 </head>
 <body>
+
+<div id="autoNotify">SMS Data Imported!</div>
 
 <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('giftcards', this)">Gift Cards</button>
@@ -88,14 +89,7 @@
 
 <div id="jupitercards" class="container" style="display:none;">
     <div class="main-layout">
-        <div class="list-container">
-            <div class="bulk-import">
-                <div class="summary-title" style="color: var(--jup)">Magic SMS Importer</div>
-                <textarea id="bulkJupInput" placeholder="Copy-paste multiple Jupiter/CSB SMS here..."></textarea>
-                <button class="btn-add" style="background:var(--jup); width:100%; border-radius:8px;" onclick="processBulkJup()">Extract Transactions</button>
-            </div>
-            <div id="jupList"></div>
-        </div>
+        <div id="jupList" class="list-container"></div>
         <div class="summary-side">
             <div class="summary-title">Jupiter Statement</div>
             <div id="jupStat"></div>
@@ -103,7 +97,7 @@
     </div>
     <div class="footer">
         <button onclick="exportData('JUP_Data_V4')">Export</button>
-        <button class="btn-add" style="background:var(--jup)" onclick="addJup()">+ Manual Entry</button>
+        <button class="btn-add" style="background:var(--jup)" onclick="addJup()">+ New Jupiter</button>
         <button onclick="triggerImport('JUP_Data_V4')">Import</button>
     </div>
 </div>
@@ -120,7 +114,31 @@
         load('giftList', DB_GIFT, addGift);
         load('bobList', DB_BOB, addBob);
         load('jupList', DB_JUP, addJup);
+        checkAutoFill(); // Check for Tasker input
     };
+
+    function checkAutoFill() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('autofill')) {
+            const data = {
+                merch: urlParams.get('m') || 'Unknown Merchant',
+                amt: urlParams.get('a') || '0',
+                date: new Date().toISOString().split('T')[0],
+                card: 'Jupiter Edge',
+                mcc: ''
+            };
+            switchTab('jupitercards', document.querySelector('.jup-tab'));
+            addJup(data);
+            
+            // Show feedback
+            const notify = document.getElementById('autoNotify');
+            notify.style.display = 'block';
+            setTimeout(() => notify.style.display = 'none', 3000);
+            
+            // Clean URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    }
 
     function switchTab(id, btn) {
         document.querySelectorAll('.container').forEach(c => c.style.display = 'none');
@@ -131,7 +149,8 @@
 
     function load(id, key, fn) {
         const data = JSON.parse(localStorage.getItem(key)) || [];
-        if (data.length === 0) fn(); else data.forEach(d => fn(d));
+        if (data.length === 0 && id !== 'jupList') fn(); 
+        data.forEach(d => fn(d));
     }
 
     // --- RENDERERS ---
@@ -194,25 +213,6 @@
         sync(div.querySelector('.j-merch'), DB_JUP);
     }
 
-    // --- BULK LOGIC ---
-    function processBulkJup() {
-        const input = document.getElementById('bulkJupInput').value;
-        // Regex to capture amount, merchant, and date from typical Jupiter/CSB formats
-        const regex = /₹([\d,.]+).*?to\s+(.*?)\s+on\s+(\d{4}-\d{2}-\d{2})/gi;
-        let match;
-        while ((match = regex.exec(input)) !== null) {
-            addJup({
-                amt: match[1].replace(/,/g, ''),
-                merch: match[2].trim(),
-                date: match[3],
-                card: 'CSB/Jup',
-                mcc: ''
-            });
-        }
-        document.getElementById('bulkJupInput').value = "";
-    }
-
-    // --- EXTRACTION LOGIC ---
     function exGift(t) {
         setTimeout(() => {
             const c = t.closest('.item-card');
@@ -245,14 +245,14 @@
         setTimeout(() => {
             const c = t.closest('.item-card');
             const val = t.value;
-            const amt = val.match(/₹([\d,.]+)/);
-            const merch = val.match(/to\s+(.*?)\s+on/i);
+            const amt = val.match(/₹([\d,.]+)/) || val.match(/INR\s?([\d,.]+)/i);
+            const merch = val.match(/at\s+(.*?)\s+on/i) || val.match(/to\s+(.*?)\s+on/i);
             const date = val.match(/on\s+(\d{4}-\d{2}-\d{2})/i);
-            const card = val.match(/Edge\s+(.*?)\s+Bank/i);
+            const card = val.match(/Edge\s+(.*?)\s+Bank/i) || val.match(/CSB/i);
 
             if(amt) c.querySelector('.j-amt').value = amt[1].replace(/,/g,'');
             if(merch) c.querySelector('.j-merch').value = merch[1].trim();
-            if(card) c.querySelector('.j-card').value = card[1];
+            if(card) c.querySelector('.j-card').value = card[1] || 'Jupiter';
             if(date) c.querySelector('.j-date').value = date[1];
             t.value = ""; sync(c.querySelector('.j-merch'), DB_JUP);
         }, 50);
